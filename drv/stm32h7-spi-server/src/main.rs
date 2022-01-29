@@ -345,7 +345,7 @@ impl ServerImpl {
         // The BufReader/Writer types manage position tracking for us.
 
         // Wrap a buffer reader/writer onto whichever borrows actually exist.
-        const BUFSIZ: usize = 32;
+        const BUFSIZ: usize = 16;
         let mut tx: Option<LeaseBufReader<_, BUFSIZ>> =
             data_src.map(|b| LeaseBufReader::from(b.into_inner()));
         let mut rx: Option<LeaseBufWriter<_, BUFSIZ>> =
@@ -365,13 +365,13 @@ impl ServerImpl {
         }
 
         // We use this to exert backpressure on the TX state machine as the RX
-        // FIFO fills. Its initial value is the minimum FIFO size across any
-        // implemented SPI block on the H7; it would be nice if we could read
-        // the configured FIFO size out of the block, but that does not appear
-        // to be possible. So, we are currently conservative.
+        // FIFO fills. Its initial value is the configured FIFO size, because
+        // the FIFO size varies on SPI blocks on the H7; it would be nice if we
+        // could read the configured FIFO size out of the block, but that does
+        // not appear to be possible.
         //
         // See reference manual table 409 for details.
-        let mut tx_permits = 16;
+        let mut tx_permits = FIFO_DEPTH;
 
         // Track number of bytes sent and received. Sent bytes will lead
         // received bytes. Received bytes indicate overall progress and
