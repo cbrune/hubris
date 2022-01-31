@@ -175,7 +175,7 @@ fn enable_led_pins() {
     let gpio_moder = &gpio!().moder;
 
     #[cfg(feature = "stm32f3")]
-    gpio_moder.modify(|_, w| w.moder8().output().moder9().output());
+    gpio_moder.modify(|_, w| w.moder11().output().moder14().output());
     #[cfg(feature = "stm32f4")]
     gpio_moder.modify(|_, w| w.moder12().output().moder13().output());
 }
@@ -186,9 +186,9 @@ fn led_on(led: Led) {
 
     match led {
         #[cfg(feature = "stm32f3")]
-        Led::Zero => gpio.bsrr.write(|w| w.bs8().set_bit()),
+        Led::Zero => gpio.bsrr.write(|w| w.bs11().set_bit()),
         #[cfg(feature = "stm32f3")]
-        Led::One => gpio.bsrr.write(|w| w.bs9().set_bit()),
+        Led::One => gpio.bsrr.write(|w| w.bs14().set_bit()),
 
         #[cfg(feature = "stm32f4")]
         Led::Zero => gpio.bsrr.write(|w| w.bs12().set_bit()),
@@ -203,9 +203,9 @@ fn led_off(led: Led) {
 
     match led {
         #[cfg(feature = "stm32f3")]
-        Led::Zero => gpio.bsrr.write(|w| w.br8().set_bit()),
+        Led::Zero => gpio.bsrr.write(|w| w.br11().set_bit()),
         #[cfg(feature = "stm32f3")]
-        Led::One => gpio.bsrr.write(|w| w.br9().set_bit()),
+        Led::One => gpio.bsrr.write(|w| w.br14().set_bit()),
 
         #[cfg(feature = "stm32f4")]
         Led::Zero => gpio.bsrr.write(|w| w.br12().set_bit()),
@@ -221,18 +221,18 @@ fn led_toggle(led: Led) {
     match led {
         #[cfg(feature = "stm32f3")]
         Led::Zero => {
-            if gpio.odr.read().odr8().bit() {
-                gpio.bsrr.write(|w| w.br8().set_bit())
+            if gpio.odr.read().odr11().bit() {
+                gpio.bsrr.write(|w| w.br11().set_bit())
             } else {
-                gpio.bsrr.write(|w| w.bs8().set_bit())
+                gpio.bsrr.write(|w| w.bs11().set_bit())
             }
         }
         #[cfg(feature = "stm32f3")]
         Led::One => {
-            if gpio.odr.read().odr9().bit() {
-                gpio.bsrr.write(|w| w.br9().set_bit())
+            if gpio.odr.read().odr14().bit() {
+                gpio.bsrr.write(|w| w.br14().set_bit())
             } else {
-                gpio.bsrr.write(|w| w.bs9().set_bit())
+                gpio.bsrr.write(|w| w.bs14().set_bit())
             }
         }
 
